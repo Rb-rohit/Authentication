@@ -2,37 +2,28 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
 const Profile = () => {
-    const [loading, setLoading] = useState(false)
-    const [data, setData] = useState('')
-    
-    const token = JSON.parse(localStorage.getItem('token'))
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState('');
+
 
     const fetchData = () => {
-
-        const header = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-
-        axios.post('http://localhost:3000/user/profile', {}, header)
+        axios.post('http://localhost:3000/user/profile', {}, { withCredentials: true })
             .then((res) => {
                 setLoading(false)
-                
                 setData(res.data.data)
                 console.log("User data fetched", res);
             })
             .catch((err) => {
-                console.log("Error while fetch data", err)
-                setLoading(false)
+                console.log("Error while fetch data", err);
+                setLoading(false);
             })
     }
 
-    console.log("data", data)
+    console.log("data", data);
 
     useEffect(() => {
         fetchData()
-    }, [])
+    }, []);
 
     return (
         <div>

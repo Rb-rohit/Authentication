@@ -38,9 +38,15 @@ const login = async(req, res) => {
             return res.status(400).json({status: true, message: "Invalid Credeintial"})
         }
 
-        const token = jwt.sign({id:user._id, email: user.email}, secreteKey, { expiresIn: '1hr' })
+        const token = jwt.sign({id:user._id, email: user.email}, secreteKey, { expiresIn: '1hr' });
+        res.cookie("authToken", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000 // 1 hr
+        })
 
-        return res.status(201).json({status:true, message: "Login successful", token:token})
+        return res.status(201).json({status:true, message: "Login successful"});
     } catch (error) {
         return res.status(400).json({status:false, message: "Something went wrong", error:error.message})
     }
@@ -50,7 +56,9 @@ const login = async(req, res) => {
 
 const profile = async(req, res) => {
     try {
-        const token = req.headers?.authorization?.split(' ')[1];
+        // const token = req.headers?.authorization?.split(' ')[1];
+
+        const token = req?.cookies?.authToken;
         if(!token) return res.status(400).json({status:false, message: "Access Denied"})
 
         jwt.verify(token, secreteKey, async (err, decode) => {
@@ -70,4 +78,10 @@ const profile = async(req, res) => {
     }
 }
 
-module.exports = {register, login, profile}
+const logout = (req, res) => {
+    res.clearCookie('authToken');
+    res.status(201).json({ status: true, message: "logout success" })
+
+}
+
+module.exports = {register, login, profile, logout}

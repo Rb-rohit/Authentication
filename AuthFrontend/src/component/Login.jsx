@@ -6,9 +6,9 @@ import { toast } from 'react-toastify';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -18,18 +18,18 @@ const Login = () => {
             password: password
         }
 
-        axios.post('http://localhost:3000/user/login', payload)
+        axios.post('http://localhost:3000/user/login', payload, {withCredentials: true} )
             .then((res) => {
-                setLoading(false)
+                setLoading(false);
                 toast("Login Successful");
                 console.log("Login done", res);
-                localStorage.setItem('token', JSON.stringify(res.data.token))
-                navigate("/profile")
+                // localStorage.setItem('token', JSON.stringify(res.data.token))
+                navigate("/profile");
             })
             .catch((err) => {
                 toast("Invalid Credencial");
-                console.log("Error while login", err)
-                setLoading(false)
+                console.log("Error while login", err);
+                setLoading(false);
             })
     };
 
